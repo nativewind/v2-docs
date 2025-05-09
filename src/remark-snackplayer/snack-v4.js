@@ -1,9 +1,9 @@
 const {
   version: nativewindVersion,
-} = require("../../../../packages/nativewind/package.json");
+} = require("nativewind/package.json");
 const {
   version: interopVersion,
-} = require("../../../../packages/react-native-css-interop/package.json");
+} = require("react-native-css-interop/package.json");
 
 const expoCode = `
 import { useState, useEffect, Fragment, createElement } from "react";

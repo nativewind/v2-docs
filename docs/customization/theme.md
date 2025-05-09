@@ -1,25 +1,26 @@
 # Theme
 
-NativeWind uses the same theme values as as Tailwind CSS. You can read more about how to configure your project [through the Tailwind CSS documentation](https://tailwindcss.com/docs/theme).
+NativeWind uses the same theme values as as Tailwind CSS. You can read more about how to configure your project [through the Tailwind CSS documentation](https://tailwindcss.com/docs/theme)
 
-Fully dynamic React Native applications often make use of helper functions such as `Platform.select` and `PixelRatio`. NativeWind exports helpers allowing you to embed these functions into your theme.
+## Per platform theme values
 
-## platformSelect
+NativeWind exposes a function `platformSelect` that allows you to provide platform specific theme values.
 
-`platformSelect` is the equivalent to (`Platform.select()`)[https://reactnative.dev/docs/platform#select].
+platformSelect is the equivalent to `Platform.select()`
 
 ```js
 // tailwind.config.js
 
-const { platformSelect } = require("nativewind/theme");
+const { platformSelect } = require("nativewind");
 
 module.exports = {
   theme: {
     extend: {
       colors: {
         error: platformSelect({
-          ios: "red",
-          android: "blue",
+          // Now you can provide platform specific values
+          ios: "red"
+          android: "blue"
           default: "green",
         }),
       },
@@ -28,21 +29,26 @@ module.exports = {
 };
 ```
 
+## Per device theme values
+
+React Native provides a number of utilities for creating styles based upon physical attributes of the device. These include the [PixelRatio](https://reactnative.dev/docs/pixelratio) helpers and [StyleSheet.hairlineWidth](https://reactnative.dev/docs/stylesheet#hairlinewidth)
+
+NativeWind supports these through a set of exported helper functions that you can use in your `tailwind.config.js`
+
 ### platformColor()
 
-Equivalent of (`PlatformColor`)[https://reactnative.dev/docs/platformcolor]. Typically used with `platformSelect`.
+Equivalent of `PlatformColor`
 
-```ts title=tailwind.config.js
-const { platformColor } = require("nativewind/theme");
+```js
+// tailwind.config.js
+
+const { platformColor } = require("nativewind");
 
 module.exports = {
   theme: {
     extend: {
       colors: {
-        platformRed: platformSelect({
-          android: platformColor("systemRed"),
-          web: "red",
-        }),
+        platformRed: platformColor("systemRed", "red"),
       },
     },
   },
@@ -51,10 +57,12 @@ module.exports = {
 
 ### hairlineWidth()
 
-Equivalent of (`StyleSheet.hairlineWidth`)[https://reactnative.dev/docs/stylesheet#hairlinewidth]
+Equivalent of `StyleSheet.hairlineWidth`
 
-```ts title=tailwind.config.js
-const { hairlineWidth } = require("nativewind/theme");
+```js
+// tailwind.config.js
+
+const { hairlineWidth } = require("nativewind");
 
 module.exports = {
   theme: {
@@ -69,36 +77,28 @@ module.exports = {
 
 ### pixelRatio()
 
-Equivalent of (`PixelRatio.get()`)[https://reactnative.dev/docs/pixelratio#get]. If a number is provided it returns `PixelRatio.get() * <value>`, otherwise it returns the PixelRatio value.
+Equivalent of `PixelRatio.get()`
 
-```ts title=tailwind.config.js
-const { pixelRatio } = require("nativewind/theme");
+If a number is provided it returns `PixelRatio.get() * <value>`
+
+Otherwise it can accept an object and returns `object[PixelRatio.get()] ?? PixelRatio.get()`
+
+```js
+// tailwind.config.js
+
+const { pixelRatio } = require("nativewind");
 
 module.exports = {
   theme: {
     extend: {
       borderWidth: {
-        number: pixelRatio(2),
+        number: pixelRatio(2)
+        object: pixelRatio({
+          1: 1
+          1.5: 2
+          2: 4
+        })
       },
-    },
-  },
-};
-```
-
-### pixelRatioSelect()
-
-A helper function to use (`PixelRatio.get()`)[https://reactnative.dev/docs/pixelratio#get] in a conditional statement, similar to `Platform.select`.
-
-```ts title=tailwind.config.js
-const { pixelRatio, hairlineWidth } = require("nativewind/theme");
-
-module.exports = {
-  theme: {
-    extend: {
-      borderWidth: pixelRatioSelect({
-        2: 1,
-        default: hairlineWidth(),
-      }),
     },
   },
 };
@@ -106,37 +106,27 @@ module.exports = {
 
 ### fontScale()
 
-Equivalent of (`PixelRatio.getFontScale()`)[https://reactnative.dev/docs/pixelratio#getFontScale]. If a number is provided it returns `PixelRatio.getFontScale() * <value>`, otherwise it returns the `PixelRatio.getFontScale()` value.
+Equivalent of `PixelRatio.getFontScale()`
 
-```ts title=tailwind.config.js
-const { fontScale } = require("nativewind/theme");
+If a number is provided it returns `PixelRatio.getFontScale() * <value>`
 
-module.exports = {
-  theme: {
-    extend: {
-      fontSize: {
-        custom: fontScale(2),
-      },
-    },
-  },
-};
-```
+Otherwise it can accept an object and returns `object[PixelRatio.getFontScale()] ?? PixelRatio.getFontScale()`
 
-### fontScaleSelect()
+```js
+// tailwind.config.js
 
-A helper function to use (`PixelRatio.getFontScale()`)[https://reactnative.dev/docs/pixelratio#getFontScale] in a conditional statement, similar to `Platform.select`.
-
-```ts title=tailwind.config.js
-const { fontScaleSelect, hairlineWidth } = require("nativewind/theme");
+const { getFontScale } = require("nativewind");
 
 module.exports = {
   theme: {
     extend: {
       fontSize: {
-        custom: fontScaleSelect({
-          2: 14,
-          default: 16,
-        }),
+        number: fontScale(2)
+        object: fontScale({
+          1: 10
+          1.5: 15
+          2: 20
+        })
       },
     },
   },
@@ -147,7 +137,9 @@ module.exports = {
 
 Equivalent of `PixelRatio.getPixelSizeForLayoutSize()`
 
-```js title=tailwind.config.js
+```js
+// tailwind.config.js
+
 const { getPixelSizeForLayoutSize } = require("nativewind");
 
 module.exports = {
@@ -165,8 +157,10 @@ module.exports = {
 
 Equivalent of `PixelRatio.roundToNearestPixel()`
 
-```ts title=tailwind.config.js
-const { roundToNearestPixel } = require("nativewind/theme");
+```js
+// tailwind.config.js
+
+const { roundToNearestPixel } = require("nativewind");
 
 module.exports = {
   theme: {

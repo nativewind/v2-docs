@@ -2,64 +2,85 @@
 
 ## What is NativeWind?
 
-NativeWind allows you to use [Tailwind CSS](https://tailwindcss.com) to style your components in React Native. Styled components can be shared between all React Native platforms, using the best style engine for that platform; CSS StyleSheet on web and StyleSheet.create for native. Its goals are to provide a consistent styling experience across all platforms, improving Developer UX, component performance and code maintainability.
+NativeWind uses [Tailwind CSS](https://tailwindcss.com) as scripting language to create a **universal styling system**. Styled components can be shared between all React Native platforms, using the best style engine for that platform; CSS StyleSheet on web and StyleSheet.create for native. Its goals are to provide a consistent styling experience across all platforms, improving Developer UX, component performance and code maintainability.
 
-On native platforms, NativeWind performs two functions. First, at build time, it compiles your Tailwind CSS styles into `StyleSheet.create` objects and determines the conditional logic of styles (e.g. hover, focus, active, etc). Second, it has an efficient runtime system that applies the styles to your components. This means you can use the full power of Tailwind CSS, including media queries, container queries, and custom values, while still having the performance of a native style system.
+NativeWind processes your styles during your application's build and uses a minimal runtime to selectively apply responsive styles (eg changes to device orientation, color scheme).
 
-On web, NativeWind is a small polyfill for adding `className` support to React Native Web.
+```SnackPlayer name=Hello%20World
+import { Text, View } from 'react-native';
+import { styled } from 'nativewind';
+
+const StyledView = styled(View)
+const StyledText = styled(Text)
+
+const App = () => {
+  return (
+    <StyledView className="flex-1 items-center justify-center">
+      <StyledText className="text-slate-800">Try editing me! 🎉</StyledText>
+    </StyledView>
+  );
+}
+```
 
 ## Key Features
 
 🌐 **Universal** Uses the best style system for each platform.
 
+🛠️ **Build time** Uses the Tailwind CSS compile, styles are generated at build time
+
+🚀 **Fast runtime** Small runtime keeps everything fast
+
 🖥️ **DevUX** Plugins for simple setup and improving intellisense support
 
-✨ **Media & Container queries** Use modern mobile styling features like media and container queries [(docs)](../core-concepts/states#hover-focus-and-active)
-
-👪 **Custom values (CSS Variables)** Create themes, sub-themes and dynamic styles using custom values
+🔥 **Lots of features** dark mode / arbitrary classes / media queries / themes / custom values / plugins
 
 ✨ **Pseudo classes** hover / focus / active on compatible components [(docs)](../core-concepts/states#hover-focus-and-active)
 
 👪 **Parent state styles** automatically style children based upon parent pseudo classes [(docs)](../core-concepts/states#hover-focus-and-active#styling-based-on-parent-state)
 
-🔥 **Lots of other features**
-
-- dark mode
-- arbitrary classes
-- platform selectors
-- plugins
-
-## How is this different StyleSheet.create?
+## What is a universal style system?
 
 A full featured style system should have
 
 - Static styles
 - UI state styles (active, hover, focus, etc)
 - Responsive styles (media queries, dynamic units)
-- Container queries (styling based upon parent appearance)
 - Device state styles (orientation, color scheme)
+- Styling inheritance
 - Use the best rendering engine available
 
-React Native's StyleSheet system only provides static styles, with other features left for the user to implement. By using NativeWind you can focus on writing your system instead of building your own custom style system.
+React Native's StyleSheet system only provides static styles, with other features left for the user to implement. By using NativeWind, you can focus on writing your system instead of building your own custom style system.
 
-On the web, it avoids injecting a StyleSheet at runtime by reusing the existing Tailwind CSS stylesheet, allowing you to use Server Side Rendering and much better initial page load performance.
+On web, CSS already has all these features and is highly optimized. While on native mobile environments, NativeWind provides a compatibility layer between React Native and CSS.
+
+This is what makes NativeWind a universal style system - it allows you to use the same components with rich styles on all React Native platforms.
 
 ## In action
 
-NativeWind handles both the Tailwind CSS compilation and the runtime styles. It works via a JSX transform, meaning there is no need for custom wrappers/boilerplate.
-
-As all React components are transformed with JSX, it works with 3rd party modules.
+You can use the Babel plugin to instantly start writing code! This will also enable your editor's language support and provide features such as autocomplete with no extra setup!
 
 ```tsx
-import { CustomText } from "third-party-text-component";
+import { Text } from "react-native";
 
 export function BoldText(props) {
-  // You just need to write `className="<your styles>"`
-  return <CustomText className="font-bold" {...props} />;
+  return <Text className="font-bold" {...props} />;
 }
 ```
 
-Styling can by dynamic and you can perform conditional logic and built up complex style objects.
+Usage of Babel is optional! You can use the Component API to be more explicit about what gets the styles.
+
+```tsx
+import { Text } from "react-native";
+import { styled } from "nativewind";
+
+const StyledText = styled(Text);
+
+export function BoldText(props) {
+  return <StyledText className="font-bold" {...props} />;
+}
+```
+
+You still have the ability to perform conditional logic and built up complex style objects.
 
 ```tsx
 import { Text } from "react-native";
@@ -75,71 +96,39 @@ export function MyText({ bold, italic, lineThrough, ...props }) {
 }
 ```
 
-By default NativeWind maps `className`->`style`, but it can handle the mapping of complex components.
-
-```tsx
-remapProps(FlatList, {
-  className: "style",
-  ListFooterComponentClassName: "ListFooterComponentStyle",
-  ListHeaderComponentClassName: "ListHeaderComponentStyle",
-  columnWrapperClassName: "columnWrapperStyle",
-  contentContainerClassName: "contentContainerStyle",
-});
-
-<FlatList
-  {...}
-  className="bg-black"
-  ListHeaderComponentClassName="bg-black text-white"
-  ListFooterComponentClassName="bg-black text-white"
-  columnWrapperClassName="bg-black"
-  contentContainerClassName="bg-black"
-  indicatorClassName="bg-black"
-/>
-```
-
-And can even work with components that expect style attributes as props
+Additional options can improve compatibility with existing RN libraries
 
 ```tsx
 import { Text } from "react-native";
-import { cssInterop } from "nativewind";
-import { Svg, Circle } from "react-native-svg";
+import { styled } from "nativewind";
+import { Svg, Circle, Rect } from "react-native-svg";
 
 /**
- * Svg uses `height`/`width` props on native and className on web
+ * These components can now use the "stroke" & "fill" props with Tailwind classes
+ * They will use inline-props on native, and className on web.
  */
-const StyledSVG = cssInterop(Svg, {
-  className: {
-    target: "style",
-    nativeStyleToProp: {
-      height: true,
-      width: true,
-    },
-  },
-});
-/**
- * Circle uses `fill`/`stroke`/`strokeWidth` props on native and className on web
- */
-const StyledCircle = cssInterop(Circle, {
-  className: {
-    target: "style",
-    nativeStyleToProp: {
-      fill: true,
-      stroke: true,
-      strokeWidth: true,
-    },
-  },
-});
+const StyledCircle = styled(Circle, { classProps: ["stroke", "fill"] });
+const StyledRect = styled(Rect, { classProps: ["stroke", "fill"] });
 
 export function BoldText(props) {
   return (
-    <StyledSVG className="w-1/2 h-1/2" viewBox="0 0 100 100">
+    <Svg height="50%" width="50%" viewBox="0 0 100 100">
       <StyledCircle
-        className="fill-green-500 stroke-blue-500 stroke-2"
         cx="50"
         cy="50"
         r="45"
+        stroke="stroke-blue-500 stroke-2"
+        fill="color-green-500"
       />
-    </StyledSVG>
+      <StyledRect
+        x="15"
+        y="15"
+        width="70"
+        height="70"
+        stroke="stroke-red-500 stroke-2"
+        fill="color-yellow-500"
+      />
+    </Svg>
   );
 }
 ```

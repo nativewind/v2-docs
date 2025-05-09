@@ -9,14 +9,10 @@
 
 ### Icon
 
-✅ Full support
+:white_check_mark: Full support
 
-✔️ Partial support on native
+:heavy_check_mark: Partial support
 
-🧪 Experimental support on native
-
-:iphone: Native only
-
-🌐 Web only
+:x: Not supported
 
 </details>

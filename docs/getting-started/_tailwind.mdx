@@ -1,4 +1,4 @@
-Run `npx tailwindcss init` to create a `tailwind.config.js` file
+Run `npx tailwindcss init` to create a `tailwind.config.js` file.
 
 Add the paths to all of your component files in your tailwind.config.js file.
 
@@ -6,25 +6,10 @@ Add the paths to all of your component files in your tailwind.config.js file.
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   // NOTE: Update this to include the paths to all of your component files.
-  content: ["./app/**/*.{js,jsx,ts,tsx}"],
-  presets: [require("nativewind/preset")],
+  content: ["./App.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {},
   },
   plugins: [],
 }
 ```
-
-Create a CSS file and add the Tailwind directives.
-
-```css title="global.css"
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
-
-:::info
-
-From here onwards, replace `./global.css` with the relative path to the CSS file you just created.
-
-:::

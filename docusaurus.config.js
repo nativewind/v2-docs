@@ -38,17 +38,6 @@ const config = {
           remarkPlugins: [require("./src/remark-snackplayer")],
           routeBasePath: "/", // disable landing page
           sidebarPath: require.resolve("./sidebars.js"),
-          lastVersion: "current",
-          versions: {
-            current: {
-              label: "v4",
-              path: "/",
-            },
-            v2: {
-              label: "v2",
-              path: "v2",
-            },
-          },
         },
         blog: {
           showReadingTime: true,
@@ -69,12 +58,6 @@ const config = {
         apiKey: "bd85496379f08b8c03fc86acdc7210f7",
         indexName: "nativewind",
         contextualSearch: true,
-        transformItems: (/** @type {{ url: string; }[]} */ items) => {
-          return items.map((/** @type {{ url: string; }} */ item) => ({
-            ...item,
-            url: item.url.replace("/v4/", "/"),
-          }));
-        },
       },
       prism: {
         defaultLanguage: "tsx",
@@ -89,11 +72,6 @@ const config = {
       },
       colorMode: {
         respectPrefersColorScheme: true,
-      },
-      announcementBar: {
-        content:
-          '<a href="/v2">Looking for the NativeWind v2 docs? Click here</a>',
-        isCloseable: true,
       },
       navbar: {
         title: "NativeWind",
@@ -111,11 +89,6 @@ const config = {
             href: "https://github.com/nativewind/nativewind",
             label: "GitHub",
             position: "right",
-          },
-          {
-            type: "docsVersionDropdown",
-            position: "left",
-            dropdownActiveClassDisabled: true,
           },
           {to: 'blog', label: 'Blog', position: 'left'},
         ],

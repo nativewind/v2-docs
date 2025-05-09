@@ -1,27 +1,33 @@
 # Units
 
-NativeWind works
+## Viewport Units
 
-## Polyfilled Units
+NativeWind supports the `vw` and `vh` viewport units.
 
-You can use these units within classes or `tailwind.config.js`.
+```SnackPlayer name=Units
+import { Text, View } from 'react-native';
+import { styled } from 'nativewind';
 
-<table>
-  <tbody style={{ display: "table", width: "100%" }}>
-    <tr>
-      <th>Unit</th>
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-    <tr>
-      <td>vw</td>
-      <td>View Width</td>
-      <td>Polyfilled using Dimensions.get('window')</td>
-    </tr>
-    <tr>
-      <td>vh</td>
-      <td>View height</td>
-      <td>Polyfilled using Dimensions.get('window')</td>
-    </tr>
-  </tbody>
-</table>
+const StyledView = styled(View)
+const StyledText = styled(Text)
+
+const App = () => {
+  return (
+    <StyledView className={`
+      items-center
+      justify-center
+      bg-slate-300
+      m-auto
+      h-[25vh]
+      w-[50vh]
+    `}>
+      <StyledText
+        selectable={false}
+        className="text-slate-800"
+      >
+        Rotate me! 🎉
+      </StyledText>
+    </StyledView>
+  );
+}
+```
