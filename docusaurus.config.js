@@ -81,6 +81,11 @@ const config = {
         },
         items: [
           {
+            href: "https://nativewind.dev",
+            label: "NativeWind",
+            position: "left",
+          },
+          {
             href: "https://nativewind.dev/discord",
             label: "Discord",
             position: "right",
